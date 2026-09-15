@@ -1,52 +1,88 @@
 # Mohammad Agent Workspace
 
-A persistent multi-agent workspace for software, research, documents, graphics, images, automation, and QA.
+A local-first multi-agent project workspace backed by GitHub.
+
+## Architecture
+
+GitHub is the Single Source of Truth for durable project files, specifications, artifacts, and version history. It is not the execution environment.
+
+Execution happens on the user's local machine through the Python 3.11+ Orchestrator.
+
+```text
+User -> Local Orchestrator -> Agent Team -> OmniRoute -> Providers/Models
+                     |                         |
+                     +------ QA <--------------+
+                              |
+                              v
+                           GitHub
+                              |
+                              v
+                     User downloads/tests
+```
 
 ## Stack
 
-- **Claude Code** — primary implementation and reasoning agent
-- **Codex** — independent implementation, automation, and review agent
-- **OmniRoute** — local routing layer between the coding agents and configured providers
-- **GitHub** — durable project memory, source, task state, specifications, and artifacts
+- Claude Code — primary implementation agent
+- Codex — independent implementation/review agent
+- OmniRoute — local model gateway
+- Python 3.11+ — Orchestrator
+- SQLite — machine state
+- Markdown — human-readable project memory
+- GitHub — storage, version control, and delivery
 
-## Start here
+## Current implementation
 
-1. Read `AGENTS.md`.
-2. Read `CLAUDE.md` when working with Claude Code.
-3. Read `CODEX.md` when working with Codex.
-4. Check `docs/TASKS.md` for active work.
-5. Check `docs/PROJECT_CONTEXT.md` and `docs/DECISIONS.md` for durable context.
-6. Use `docs/AGENT_ROUTING.md` to choose specialists.
+Phase 2 contains a minimal local Orchestrator at `tools/orchestrator/orchestrator.py`.
 
-## OmniRoute
+Smoke test:
 
-Expected local gateway:
+```powershell
+python tools/orchestrator/orchestrator.py --demo
+```
 
-`http://localhost:20128`
+Utilities:
 
-Keep all live provider credentials in OmniRoute or environment variables. Never commit them to Git.
+```powershell
+python tools/orchestrator/orchestrator.py --detect "fix my Python code"
+python tools/orchestrator/orchestrator.py --route CODING
+```
 
-## Workspace model
+Local SQLite state is written to `tools/orchestrator/state.db` and is ignored by Git.
 
-Each project can live under its own folder. Upload source files, datasets, documents, images, prompts, and specifications into the appropriate project folder. The agent team should inspect the repository first, preserve existing work, and leave reproducible artifacts and tests behind.
+## Project storage
 
-## Suggested project layout
+Use isolated project folders:
 
 ```text
 projects/
   <project-name>/
     README.md
     input/
-    src/
-    tests/
+    source/
+    code/
+    data/
+    research/
     docs/
     design/
     assets/
+    tests/
     output/
+    final/
 ```
 
-For large binary assets, use Git LFS or external storage rather than committing huge files directly.
+Generated files placed in the repository can be downloaded by the user and tested locally. Large binaries should use Git LFS or suitable external storage.
 
 ## Security
 
-Never commit API keys, OAuth tokens, cookies, session files, private keys, or other secrets.
+Never commit API keys, Kiro/Claude/OpenAI tokens, OAuth credentials, passwords, cookies, sessions, private keys, or local credential files. Secrets remain local.
+
+Pre-commit secret scanning uses gitleaks. A detected secret must block the commit.
+
+## Phases
+
+1. Foundation
+2. Minimal Orchestrator
+3. Claude Code + OmniRoute
+4. Codex Reviewer
+5. Specialized Teams
+6. START.ps1 + Security Automation
