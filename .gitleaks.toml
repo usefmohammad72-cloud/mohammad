@@ -4,8 +4,7 @@ title = "mohammad repository secret scanning"
 useDefault = true
 
 [allowlist]
-description = "Safe documentation examples only"
+description = "Only the non-secret environment template is allowlisted"
 paths = [
-  '''^\.env\.example$''',
-  '''^docs/.*\.md$'''
+  '''^\.env\.example$'''
 ]
