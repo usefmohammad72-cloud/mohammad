@@ -1,0 +1,11 @@
+title = "mohammad repository secret scanning"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Safe documentation examples only"
+paths = [
+  '''^\.env\.example$''',
+  '''^docs/.*\.md$'''
+]
