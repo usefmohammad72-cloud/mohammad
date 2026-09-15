@@ -1,0 +1,10 @@
+title = "mohammad repository secret scanning"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Only the non-secret environment template is allowlisted"
+paths = [
+  '''^\.env\.example$'''
+]
