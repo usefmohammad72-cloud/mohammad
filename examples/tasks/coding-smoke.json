@@ -1,0 +1,8 @@
+{
+  "id": "coding-smoke",
+  "project": "orchestrator-demo",
+  "task_type": "CODING",
+  "prompt": "Run the Phase 2 smoke test.",
+  "command": ["python", "-c", "print('TASK_FILE_EXECUTION_OK')"],
+  "timeout": 30
+}
