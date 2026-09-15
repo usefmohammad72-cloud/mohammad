@@ -1,51 +1,73 @@
-# Agent Team Operating System
+# Agent Team Operating Contract
 
-This repository is designed to be worked on by a coordinated local agent team using Claude Code and Codex through OmniRoute.
+## Architecture
+
+This repository is the Single Source of Truth for durable project files, documentation, artifacts, and version history. GitHub is not the execution environment. Agent execution is local through the Python Orchestrator.
+
+Locked stack:
+- Python 3.11+
+- SQLite for machine state
+- Markdown for human-readable state/documentation
+- subprocess + JSON for agent execution
+- OmniRoute as the local model gateway after current compatibility is verified
+- Windows/Linux local execution
+- GitHub Actions optional
 
 ## Mission
 
-Handle software, research, documents, graphics, image workflows, testing, and release tasks from one repository while keeping project state and instructions in Git.
+Coordinate coding, research, Excel/data, documents/presentations, graphics/images, automation, and QA while keeping credentials local and project artifacts in Git.
 
 ## Team
 
-- **Orchestrator**: breaks the user's request into work packages, chooses the right specialist, tracks dependencies, and integrates results.
-- **Claude Engineer**: implementation, refactoring, debugging, architecture, and code review with Claude Code.
-- **Codex Engineer**: independent implementation, test generation, automation, and second-opinion review with Codex.
-- **Researcher**: source verification, requirements extraction, technical research, and evidence files.
-- **Visual Designer**: UI/UX, layouts, posters, diagrams, prompts, and visual asset specifications.
-- **Vision/Asset Agent**: image analysis, asset preparation, OCR/metadata checks, and visual QA.
-- **QA Agent**: tests, validation, regression checks, acceptance criteria, and release gates.
-- **Document Agent**: Word/Markdown/PDF-ready content, structured reports, tables, and presentation material.
+- Orchestrator: planning, routing, state, integration
+- Claude Engineer: implementation, debugging, architecture
+- Codex Engineer: independent implementation/review/testing
+- Researcher: evidence and source verification
+- Excel/Data Agent: formulas, VBA, data workflows
+- Document Agent: Word/PDF/PowerPoint/report content
+- Visual Agent: design and visual specifications
+- Vision/Asset Agent: image analysis and asset QA
+- QA Agent: independent validation and acceptance gates
 
-## Delegation rules
+## Language policy
 
-1. The Orchestrator owns the final plan and integration.
-2. Parallelize independent tasks; keep dependent tasks sequential.
-3. Never overwrite another agent's work without reviewing the diff first.
-4. Every meaningful task gets a short plan and an acceptance checklist.
-5. Prefer small, reviewable commits.
-6. Do not place secrets, provider tokens, OAuth credentials, cookies, or local machine paths in Git.
-7. OmniRoute is the local routing layer. Provider credentials stay in the user's local OmniRoute installation.
-8. Do not claim a provider is free or unlimited unless the connected provider/dashboard currently confirms it.
-9. For external factual claims, verify the source and record the source in `docs/research/` when the claim matters to the project.
-10. For graphics or image work, store prompts/specifications and source metadata in Git; binary assets may be added when the user explicitly wants them stored.
+Technical system files (AGENTS.md, CLAUDE.md, CODEX.md, README.md): English.
+User-facing reports/project notes: Persian when appropriate.
+Code, filenames, IDs, and commit messages: English.
 
-## Task lifecycle
+## Security
 
-`INTAKE -> PLAN -> RESEARCH/DESIGN -> IMPLEMENT -> TEST -> REVIEW -> INTEGRATE -> RELEASE`
+Never commit API keys, Kiro/Claude/OpenAI tokens, OAuth credentials, passwords, cookies, sessions, private keys, or local credential files. Secrets stay on the user's local machine. `.env.example` contains no real secret.
 
-## Project memory
+A pre-commit gitleaks scan is required. If a secret is detected, the commit must stop.
 
-Keep durable decisions in:
+## Workflow
 
-- `docs/PROJECT_CONTEXT.md`
-- `docs/DECISIONS.md`
-- `docs/TASKS.md`
-- `docs/research/`
-- `docs/design/`
+INTAKE -> PLAN -> RESEARCH/DESIGN -> IMPLEMENT -> TEST -> REVIEW -> INTEGRATE -> RELEASE
 
-Do not put personal secrets or API tokens in these files.
+Independent work may run in parallel; dependent work is sequential.
 
-## Definition of done
+## State and memory
 
-A task is done only when the requested artifact exists, the relevant checks have been run or explicitly marked unavailable, and the result is recorded in a concise task note or commit message.
+Machine state: `tools/orchestrator/state.db` (local and gitignored).
+Human state: `docs/PROJECT_CONTEXT.md`, `docs/DECISIONS.md`, `docs/TASKS.md`.
+
+## Agent disagreement
+
+Record both technical positions. The Orchestrator decides or asks the user. Record the reason in DECISIONS.md. Never prefer an agent without a reason.
+
+## QA
+
+QA must use explicit PASS/FAIL criteria and should use a different provider/model or substantially different review prompt when practical to reduce correlated errors.
+
+## Cost controls
+
+Respect configured token, call, and retry limits. Stop when a limit is exceeded and report it.
+
+## Git policy
+
+`main` = stable, `dev` = active development, `agent/<task-id>` = task work. PRs are optional for normal work and required for destructive, public-release, or major sensitive changes.
+
+## Truthfulness
+
+Never claim a task, connection, or test is complete unless it actually passed. Distinguish static validation from real execution and user validation.
