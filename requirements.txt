@@ -1,0 +1,2 @@
+# Phase 2 uses only Python standard library.
+# Third-party packages will be added only when a later phase requires them.
