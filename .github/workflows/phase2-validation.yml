@@ -1,0 +1,41 @@
+name: Phase 2 Validation
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - 'agent/**'
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run orchestrator smoke task
+        run: python tools/orchestrator/orchestrator.py --demo
+
+      - name: Run tests
+        run: python -m pytest -q
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
